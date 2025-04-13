@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kiko - 일본어 라디오 학습 플랫폼</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Noto Sans KR", "Noto Sans JP", sans-serif;
+        color: #333;
+        background-color: #f8f9fa;
+      }
+      .gradient-bg {
+        background: linear-gradient(135deg, #fc8181 0%, #f6ad55 100%);
+      }
+      .feature-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+      }
+      .japanese-text {
+        font-family: "Noto Sans JP", sans-serif;
+      }
+      .highlight-word {
+        background-color: #feebc8;
+        border-bottom: 2px solid #ed8936;
+        padding: 0 2px;
+        cursor: pointer;
+        position: relative;
+      }
+      .tooltip {
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #4a5568;
+        color: white;
+        padding: 0.5rem;
+        border-radius: 0.25rem;
+        font-size: 0.75rem;
+        white-space: nowrap;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+      }
+      .highlight-word:hover .tooltip {
+        opacity: 1;
+        visibility: visible;
+      }
+      .step-card {
+        position: relative;
+      }
+      .step-card::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        right: -30px;
+        width: 30px;
+        height: 2px;
+        background-color: #e2e8f0;
+      }
+      .step-card:last-child::after {
+        display: none;
+      }
+      @media (max-width: 768px) {
+        .step-card::after {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 헤더 -->
+    <header class="sticky top-0 z-50 bg-white shadow-sm">
+      <div
+        class="container mx-auto px-4 py-3 flex justify-between items-center"
+      >
+        <div class="flex items-center">
+          <div class="text-2xl font-bold text-red-500">
+            Kiko
+            <span class="japanese-text text-sm text-gray-600">聞こう</span>
+          </div>
+        </div>
+        <nav class="hidden md:flex space-x-6">
+          <a
+            href="#features"
+            class="font-medium text-gray-600 hover:text-red-500"
+            >기능</a
+          >
+          <a
+            href="#how-it-works"
+            class="font-medium text-gray-600 hover:text-red-500"
+            >이용방법</a
+          >
+          <a
+            href="#benefits"
+            class="font-medium text-gray-600 hover:text-red-500"
+            >장점</a
+          >
+        </nav>
+        <button
+          class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg shadow-md transition duration-300"
+        >
+          사전신청하기
+        </button>
+        <button class="md:hidden focus:outline-none">
+          <i class="fas fa-bars text-gray-700"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- 히어로 섹션 -->
+    <section class="py-20">
+      <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row items-center">
+          <div class="md:w-1/2 md:pr-12">
+            <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-6">
+              라디오로 <span class="text-red-500">듣고</span>, <br />
+              스크립트로 <span class="text-red-500">보고</span>, <br />
+              단어장으로 <span class="text-red-500">외우는</span> <br />
+              일본어 학습
+            </h1>
+            <p class="text-lg text-gray-600 mb-8">
+              일본어 라디오 콘텐츠를 업로드하면 자동으로 텍스트로 변환해주고,
+              단어를 클릭하면 뜻을 확인할 수 있으며, 모르는 단어는 단어장에
+              저장하여 효과적으로 일본어를 학습할 수 있는 플랫폼입니다.
+            </p>
+            <div
+              class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4"
+            >
+              <button
+                class="bg-red-500 hover:bg-red-600 text-white py-3 px-8 rounded-lg shadow-md transition duration-300 font-medium"
+              >
+                사전신청하기
+              </button>
+              <!-- <button
+                class="border border-gray-300 hover:border-red-500 hover:text-red-500 py-3 px-8 rounded-lg shadow-sm transition duration-300 font-medium"
+              >
+                데모 보기
+              </button> -->
+            </div>
+          </div>
+          <div class="md:w-1/2 mt-12 md:mt-0">
+            <div class="bg-white rounded-xl shadow-2xl overflow-hidden">
+              <div class="bg-gray-800 p-3 flex items-center">
+                <div class="flex space-x-2">
+                  <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                  <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                  <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                </div>
+                <div class="text-white text-xs ml-4">
+                  RadioNihongo - 学習モード
+                </div>
+              </div>
+              <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                  <div class="text-lg font-medium">日本のニュース #23</div>
+                  <div class="flex items-center text-sm text-gray-500">
+                    <i class="fas fa-clock mr-1"></i> 03:24 / 05:30
+                  </div>
+                </div>
+                <div class="flex space-x-4 mb-6">
+                  <button
+                    class="bg-gray-200 hover:bg-gray-300 rounded-full p-3 transition duration-300"
+                  >
+                    <i class="fas fa-step-backward text-gray-700"></i>
+                  </button>
+                  <button
+                    class="bg-red-500 hover:bg-red-600 rounded-full p-4 text-white transition duration-300"
+                  >
+                    <i class="fas fa-pause text-lg"></i>
+                  </button>
+                  <button
+                    class="bg-gray-200 hover:bg-gray-300 rounded-full p-3 transition duration-300"
+                  >
+                    <i class="fas fa-step-forward text-gray-700"></i>
+                  </button>
+                </div>
+                <div
+                  class="bg-gray-100 rounded-lg p-4 mb-4 japanese-text text-lg leading-relaxed"
+                >
+                  今日は<span class="highlight-word"
+                    >東京<span class="tooltip">도쿄 (Tokyo)</span></span
+                  >の<span class="highlight-word"
+                    >天気<span class="tooltip">날씨 (Weather)</span></span
+                  >について<span class="highlight-word"
+                    >お伝え<span class="tooltip"
+                      >알려드리다 (Inform)</span
+                    ></span
+                  >します。<span class="highlight-word"
+                    >午前中<span class="tooltip">오전 중 (Morning)</span></span
+                  >は<span class="highlight-word"
+                    >晴れ<span class="tooltip">맑음 (Sunny)</span></span
+                  >ですが、<span class="highlight-word"
+                    >午後<span class="tooltip">오후 (Afternoon)</span></span
+                  >から<span class="highlight-word"
+                    >雨<span class="tooltip">비 (Rain)</span></span
+                  >になるでしょう。
+                </div>
+                <div class="flex justify-between">
+                  <button
+                    class="bg-gray-100 hover:bg-gray-200 py-2 px-4 rounded-lg text-sm flex items-center transition duration-300"
+                  >
+                    <i class="fas fa-book-open mr-2"></i> 단어장에 저장
+                  </button>
+                  <button
+                    class="bg-gray-100 hover:bg-gray-200 py-2 px-4 rounded-lg text-sm flex items-center transition duration-300"
+                  >
+                    <i class="fas fa-repeat mr-2"></i> 다시 듣기
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 주요 기능 섹션 -->
+    <section id="features" class="py-20 bg-white">
+      <div class="container mx-auto px-4">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl font-bold mb-4">주요 기능</h2>
+          <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+            RadioNihongo의 핵심 기능을 통해 일본어 학습을 더욱 효과적으로 할 수
+            있습니다.
+          </p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <!-- 기능 1: 음성 업로드 및 STT -->
+          <div
+            class="feature-card bg-white rounded-xl shadow-lg p-6 border border-gray-100"
+          >
+            <div
+              class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-6"
+            >
+              <i class="fas fa-microphone text-2xl text-red-500"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-3">음성 업로드 및 STT 변환</h3>
+            <p class="text-gray-600 mb-4">
+              일본어 라디오 음성 파일을 업로드하면 AI가 자동으로 텍스트로 변환해
+              스크립트를 제공합니다. 실제 일본인의 발음과 표현을 그대로 학습할
+              수 있습니다.
+            </p>
+            <div class="bg-gray-50 rounded-lg p-4">
+              <div class="flex items-center mb-3">
+                <div
+                  class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-white mr-3"
+                >
+                  <i class="fas fa-upload"></i>
+                </div>
+                <div class="text-sm font-medium">음성 파일 업로드</div>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
+                <div class="bg-red-500 h-2 rounded-full w-full"></div>
+              </div>
+              <div class="text-xs text-gray-500">OpenAI Whisper API 활용</div>
+            </div>
+          </div>
+
+          <!-- 기능 2: 스크립트 인터랙션 -->
+          <div
+            class="feature-card bg-white rounded-xl shadow-lg p-6 border border-gray-100"
+          >
+            <div
+              class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-6"
+            >
+              <i class="fas fa-language text-2xl text-orange-500"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-3">스크립트 인터랙션</h3>
+            <p class="text-gray-600 mb-4">
+              변환된 텍스트에서 모르는 단어를 클릭하면 즉시 한국어 의미와 예문을
+              제공합니다. 문맥 속에서 단어의 의미를 파악할 수 있습니다.
+            </p>
+            <div class="bg-gray-50 rounded-lg p-4">
+              <div class="japanese-text text-sm mb-2">
+                明日は<span class="highlight-word"
+                  >雨<span class="tooltip">비 (Rain)</span></span
+                >になる<span class="highlight-word"
+                  >予定<span class="tooltip">예정 (Plan)</span></span
+                >です。
+              </div>
+              <div class="bg-white border border-gray-200 rounded p-3 text-sm">
+                <div class="font-bold">雨 (あめ)</div>
+                <div class="text-gray-600">비 (Rain)</div>
+                <div class="text-xs text-gray-500 mt-1">
+                  例文: 雨が降っています。
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 기능 3: 단어장 저장 -->
+          <div
+            class="feature-card bg-white rounded-xl shadow-lg p-6 border border-gray-100"
+          >
+            <div
+              class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mb-6"
+            >
+              <i class="fas fa-book text-2xl text-yellow-500"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-3">단어장 저장</h3>
+            <p class="text-gray-600 mb-4">
+              모르는 단어는 클릭 한 번으로 단어장에 저장하여 효과적으로 복습할
+              수 있습니다. 개인 맞춤형 단어장을 만들어 학습 효율을 높이세요.
+            </p>
+            <div class="bg-gray-50 rounded-lg p-4">
+              <div class="flex justify-between items-center mb-3">
+                <div class="font-medium">나의 단어장</div>
+                <div class="text-xs text-gray-500">12개 저장됨</div>
+              </div>
+              <div class="space-y-2">
+                <div class="bg-white rounded p-2 text-sm flex justify-between">
+                  <div>天気 (てんき)</div>
+                  <div class="text-gray-600">날씨</div>
+                </div>
+                <div class="bg-white rounded p-2 text-sm flex justify-between">
+                  <div>午前中 (ごぜんちゅう)</div>
+                  <div class="text-gray-600">오전 중</div>
+                </div>
+                <div class="bg-white rounded p-2 text-sm flex justify-between">
+                  <div>晴れ (はれ)</div>
+                  <div class="text-gray-600">맑음</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 이용방법 섹션 -->
+    <section id="how-it-works" class="py-20 bg-gray-50">
+      <div class="container mx-auto px-4">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl font-bold mb-4">이용 방법</h2>
+          <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+            RadioNihongo는 간단한 3단계로 일본어 학습을 시작할 수 있습니다.
+          </p>
+        </div>
+        <div
+          class="flex flex-col md:flex-row justify-center items-center md:space-x-8 space-y-8 md:space-y-0"
+        >
+          <div
+            class="step-card bg-white rounded-xl shadow-md p-6 w-full md:w-64 text-center"
+          >
+            <div
+              class="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-4 text-white text-2xl font-bold"
+            >
+              1
+            </div>
+            <h3 class="text-xl font-bold mb-2">음성 업로드</h3>
+            <p class="text-gray-600">
+              라디오, 팟캐스트 등 일본어 음성 파일을 업로드합니다.
+            </p>
+          </div>
+          <div
+            class="step-card bg-white rounded-xl shadow-md p-6 w-full md:w-64 text-center"
+          >
+            <div
+              class="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-4 text-white text-2xl font-bold"
+            >
+              2
+            </div>
+            <h3 class="text-xl font-bold mb-2">스크립트 학습</h3>
+            <p class="text-gray-600">
+              변환된 텍스트로 모르는 단어를 클릭하며 학습합니다.
+            </p>
+          </div>
+          <div
+            class="step-card bg-white rounded-xl shadow-md p-6 w-full md:w-64 text-center"
+          >
+            <div
+              class="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-4 text-white text-2xl font-bold"
+            >
+              3
+            </div>
+            <h3 class="text-xl font-bold mb-2">단어장 복습</h3>
+            <p class="text-gray-600">
+              저장한 단어들을 단어장에서 효과적으로 복습합니다.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 사용 예시 섹션 -->
+    <section class="py-20 bg-white">
+      <div class="container mx-auto px-4">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl font-bold mb-4">실제 사용 예시</h2>
+          <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+            RadioNihongo를 활용한 일본어 학습 과정을 확인해보세요.
+          </p>
+        </div>
+        <div
+          class="bg-white rounded-xl shadow-lg overflow-hidden max-w-4xl mx-auto"
+        >
+          <div class="bg-gray-800 p-3 flex items-center">
+            <div class="flex space-x-2">
+              <div class="w-3 h-3 rounded-full bg-red-500"></div>
+              <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+              <div class="w-3 h-3 rounded-full bg-green-500"></div>
+            </div>
+            <div class="text-white text-xs ml-4">RadioNihongo - 学習モード</div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-5 gap-0">
+            <div class="md:col-span-3 p-6">
+              <div class="flex justify-between items-center mb-4">
+                <div class="text-lg font-medium">東京の天気予報</div>
+                <div class="flex items-center text-sm text-gray-500">
+                  <i class="fas fa-volume-up mr-1"></i> 再生中
+                </div>
+              </div>
+              <div
+                class="bg-gray-100 rounded-lg p-4 japanese-text leading-relaxed mb-4"
+              >
+                <p class="mb-2">
+                  こんにちは、<span class="highlight-word"
+                    >天気予報<span class="tooltip"
+                      >일기 예보 (Weather forecast)</span
+                    ></span
+                  >の時間です。
+                </p>
+                <p class="mb-2">
+                  今日の<span class="highlight-word"
+                    >東京<span class="tooltip">도쿄 (Tokyo)</span></span
+                  >は<span class="highlight-word"
+                    >曇り<span class="tooltip">흐림 (Cloudy)</span></span
+                  >で、<span class="highlight-word"
+                    >最高気温<span class="tooltip"
+                      >최고 기온 (Highest temperature)</span
+                    ></span
+                  >は25<span class="highlight-word"
+                    >度<span class="tooltip">도 (Degree)</span></span
+                  >です。
+                </p>
+                <p class="mb-2">
+                  <span class="highlight-word"
+                    >明日<span class="tooltip">내일 (Tomorrow)</span></span
+                  >は<span class="highlight-word"
+                    >晴れ<span class="tooltip">맑음 (Sunny)</span></span
+                  >の<span class="highlight-word"
+                    >予定<span class="tooltip">예정 (Plan)</span></span
+                  >です。
+                </p>
+              </div>
+              <div class="flex space-x-3">
+                <button
+                  id="repeat-button"
+                  class="bg-gray-100 hover:bg-gray-200 py-2 px-4 rounded-lg text-sm flex items-center transition duration-300"
+                >
+                  <i class="fas fa-redo-alt mr-2"></i> 반복 재생
+                </button>
+                <button
+                  class="bg-gray-100 hover:bg-gray-200 py-2 px-4 rounded-lg text-sm flex items-center transition duration-300"
+                >
+                  <i class="fas fa-pause mr-2"></i> 일시 정지
+                </button>
+                <button
+                  class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg text-sm flex items-center transition duration-300"
+                >
+                  <i class="fas fa-book mr-2"></i> 단어장 저장
+                </button>
+              </div>
+            </div>
+            <div class="md:col-span-2 bg-gray-50 p-6 border-l border-gray-200">
+              <div class="mb-4">
+                <div class="text-lg font-medium mb-2">단어 정보</div>
+                <div class="bg-white rounded-lg p-4 border border-gray-200">
+                  <div class="japanese-text text-xl font-bold">曇り</div>
+                  <div class="text-sm text-gray-600 mb-2">くもり (kumori)</div>
+                  <div class="font-medium">흐림, 구름 낀 날씨</div>
+                  <div class="text-sm text-gray-600 mt-2">예문:</div>
+                  <div class="japanese-text text-sm mt-1">今日は曇りです。</div>
+                  <div class="text-sm text-gray-600">오늘은 흐립니다.</div>
+                </div>
+              </div>
+              <div>
+                <div class="text-lg font-medium mb-2">단어장</div>
+                <div class="space-y-2">
+                  <div
+                    class="bg-white rounded p-2 text-sm flex justify-between items-center"
+                  >
+                    <div class="japanese-text">天気予報</div>
+                    <div class="text-gray-600">일기 예보</div>
+                  </div>
+                  <div
+                    class="bg-white rounded p-2 text-sm flex justify-between items-center"
+                  >
+                    <div class="japanese-text">最高気温</div>
+                    <div class="text-gray-600">최고 기온</div>
+                  </div>
+                  <div
+                    class="bg-white rounded p-2 text-sm flex justify-between items-center"
+                  >
+                    <div class="japanese-text">曇り</div>
+                    <div class="text-gray-600">흐림</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 장점 섹션 -->
+    <section id="benefits" class="py-20 bg-gray-50">
+      <div class="container mx-auto px-4">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl font-bold mb-4">RadioNihongo의 장점</h2>
+          <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+            왜 RadioNihongo로 일본어를 학습해야 할까요?
+          </p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div class="bg-white p-6 rounded-xl shadow-md">
+            <div
+              class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4"
+            >
+              <i class="fas fa-headphones text-red-500"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-2">실제 일본어 학습</h3>
+            <p class="text-gray-600">
+              교과서가 아닌 실제 일본인들이 사용하는 자연스러운 일본어 표현을
+              배울 수 있습니다.
+            </p>
+          </div>
+          <div class="bg-white p-6 rounded-xl shadow-md">
+            <div
+              class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mb-4"
+            >
+              <i class="fas fa-bolt text-orange-500"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-2">효율적인 학습</h3>
+            <p class="text-gray-600">
+              STT 기술과 단어 사전이 결합되어 원클릭으로 모르는 단어의 의미를
+              바로 확인할 수 있습니다.
+            </p>
+          </div>
+          <div class="bg-white p-6 rounded-xl shadow-md">
+            <div
+              class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4"
+            >
+              <i class="fas fa-bookmark text-green-500"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-2">개인화된 단어장</h3>
+            <p class="text-gray-600">
+              자신이 모르는 단어만 저장하여 맞춤형 단어장을 만들고 효과적으로
+              복습할 수 있습니다.
+            </p>
+          </div>
+          <div class="bg-white p-6 rounded-xl shadow-md">
+            <div
+              class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4"
+            >
+              <i class="fas fa-clock text-blue-500"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-2">시간 절약</h3>
+            <p class="text-gray-600">
+              라디오 콘텐츠를 듣고 사전을 찾는 번거로움 없이 한 플랫폼에서 모든
+              학습이 가능합니다.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA 섹션 -->
+    <section class="py-20 gradient-bg">
+      <div class="container mx-auto px-4 text-center">
+        <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">
+          지금 바로 일본어 학습을 시작하세요
+        </h2>
+        <p class="text-xl text-white opacity-90 mb-8 max-w-2xl mx-auto">
+          RadioNihongo로 일본어 라디오를 들으며 자연스럽게 일본어 실력을
+          향상시키세요.
+        </p>
+        <div
+          class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4"
+        >
+          <button
+            class="bg-white text-red-500 hover:bg-gray-100 py-3 px-8 rounded-lg shadow-md transition duration-300 font-medium"
+          >
+            사전신청하기
+          </button>
+          <!-- <button
+            class="border-2 border-white text-white hover:bg-white hover:text-red-500 py-3 px-8 rounded-lg shadow-md transition duration-300 font-medium"
+          >
+            더 알아보기
+          </button> -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 자주 묻는 질문 -->
+    <section class="py-20 bg-white">
+      <div class="container mx-auto px-4">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl font-bold mb-4">자주 묻는 질문</h2>
+          <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+            RadioNihongo에 대해 궁금한 점이 있으신가요?
+          </p>
+        </div>
+        <div class="max-w-3xl mx-auto">
+          <div class="mb-6">
+            <div
+              class="flex justify-between items-center p-4 bg-gray-50 rounded-lg cursor-pointer"
+            >
+              <h3 class="text-lg font-medium">
+                어떤 음성 파일 형식을 지원하나요?
+              </h3>
+              <i class="fas fa-chevron-down text-gray-500"></i>
+            </div>
+            <div class="p-4 bg-white border border-gray-100 rounded-b-lg">
+              <p class="text-gray-600">
+                MP3, WAV, M4A 등 대부분의 오디오 파일 형식을 지원합니다. 최대
+                30분 길이의 파일까지 업로드 가능합니다.
+              </p>
+            </div>
+          </div>
+          <div class="mb-6">
+            <div
+              class="flex justify-between items-center p-4 bg-gray-50 rounded-lg cursor-pointer"
+            >
+              <h3 class="text-lg font-medium">무료로 이용할 수 있나요?</h3>
+              <i class="fas fa-chevron-down text-gray-500"></i>
+            </div>
+            <div class="p-4 bg-white border border-gray-100 rounded-b-lg">
+              <p class="text-gray-600">
+                기본 기능은 무료로 이용 가능합니다. 월 5개의 음성 파일까지
+                무료로 변환할 수 있으며, 프리미엄 요금제를 통해 더 많은 기능을
+                이용할 수 있습니다.
+              </p>
+            </div>
+          </div>
+          <div class="mb-6">
+            <div
+              class="flex justify-between items-center p-4 bg-gray-50 rounded-lg cursor-pointer"
+            >
+              <h3 class="text-lg font-medium">
+                STT 변환의 정확도는 어느 정도인가요?
+              </h3>
+              <i class="fas fa-chevron-down text-gray-500"></i>
+            </div>
+            <div class="p-4 bg-white border border-gray-100 rounded-b-lg">
+              <p class="text-gray-600">
+                OpenAI Whisper API를 활용하여 약 95% 이상의 정확도를 제공합니다.
+                일본어 발음이 명확한 콘텐츠일수록 더 높은 정확도를 보입니다.
+              </p>
+            </div>
+          </div>
+          <div>
+            <div
+              class="flex justify-between items-center p-4 bg-gray-50 rounded-lg cursor-pointer"
+            >
+              <h3 class="text-lg font-medium">
+                직접 라디오 콘텐츠를 녹음할 수도 있나요?
+              </h3>
+              <i class="fas fa-chevron-down text-gray-500"></i>
+            </div>
+            <div class="p-4 bg-white border border-gray-100 rounded-b-lg">
+              <p class="text-gray-600">
+                아직 녹음 기능은 제공하지 않습니다만, 향후 업데이트를 통해
+                웹사이트 내에서 직접 라디오 콘텐츠를 녹음하는 기능을 추가할
+                예정입니다.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 푸터 -->
+    <footer class="bg-gray-800 text-white py-12">
+      <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div>
+            <div class="text-2xl font-bold mb-4">Kiko</div>
+            <p class="text-gray-400">
+              일본어 라디오 콘텐츠를 활용한 효과적인 일본어 학습 플랫폼입니다.
+            </p>
+          </div>
+          <div>
+            <h3 class="text-lg font-medium mb-4">서비스</h3>
+            <ul class="space-y-2 text-gray-400">
+              <li><a href="#" class="hover:text-white">음성 업로드</a></li>
+              <li><a href="#" class="hover:text-white">스크립트 보기</a></li>
+              <li><a href="#" class="hover:text-white">단어장</a></li>
+              <li><a href="#" class="hover:text-white">프리미엄 기능</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="text-lg font-medium mb-4">문의</h3>
+            <p class="text-gray-400 mb-4">
+              궁금한 점이 있으시면 언제든지 문의해 주세요.
+            </p>
+            <div class="flex space-x-4">
+              <!-- 이메일 -->
+              <a
+                href="mailto:myuni0234@gmail.com"
+                class="text-gray-400 hover:text-white"
+              >
+                <i class="fas fa-envelope"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div
+          class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400"
+        >
+          <p>&copy; 2025 Kiko. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <audio id="audio-player" src="sample.mp3"></audio>
+
+    <script>
+      const repeatButton = document.getElementById("repeat-button");
+      repeatButton.addEventListener("click", () => {
+        const audio = document.getElementById("audio-player");
+        audio.currentTime = 0;
+        audio.play();
+      });
+    </script>
+  </body>
+</html>
