@@ -1,0 +1,44 @@
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+/>
+
+<div class="p-6 max-w-4xl mx-auto">
+  <h1 class="text-2xl font-bold mb-4">📚 내 단어장</h1>
+
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <!-- 단어 카드 반복 영역 -->
+    <div
+      class="bg-yellow-100 border border-yellow-300 rounded-xl p-4 shadow hover:scale-105 transition-all cursor-pointer"
+    >
+      <h2 class="text-xl font-semibold">晴れ</h2>
+      <p class="text-gray-700 text-sm mt-1">はれ</p>
+      <p class="text-gray-500 text-sm mt-2">맑음 / 날씨가 좋음</p>
+      <span class="text-xs text-blue-600 mt-2 inline-block">명사</span>
+    </div>
+
+    <!-- 예시 반복 카드 -->
+    <div
+      class="bg-yellow-100 border border-yellow-300 rounded-xl p-4 shadow hover:scale-105 transition-all cursor-pointer"
+    >
+      <h2 class="text-xl font-semibold">雲り</h2>
+      <p class="text-gray-700 text-sm mt-1">くもり</p>
+      <p class="text-gray-500 text-sm mt-2">흐림</p>
+      <span class="text-xs text-blue-600 mt-2 inline-block">명사</span>
+    </div>
+  </div>
+
+  <!-- 하단 검색창 -->
+  <div class="mt-8">
+    <label for="search" class="block text-sm font-medium text-gray-700"
+      >단어 검색</label
+    >
+    <input
+      type="text"
+      id="search"
+      name="search"
+      placeholder="예: 晴れ, 東京"
+      class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+    />
+  </div>
+</div>

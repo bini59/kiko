@@ -1,0 +1,45 @@
+meta {
+  name: stt
+  type: http
+  seq: 3
+}
+
+post {
+  url: https://openapi.vito.ai/v1/transcribe
+  body: multipartForm
+  auth: bearer
+}
+
+headers {
+  accept: application/json
+  Content-Type: multipart/form-data
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYSI6dHJ1ZSwiZXhwIjoxNzQ1ODY4MzIyLCJmdWUiOmZhbHNlLCJoYmkiOmZhbHNlLCJpYXQiOjE3NDU4NDY3MjIsImp0aSI6IjJIUmxSLVZ3RnNnTHJsUEkwb2lvIiwicGxhbiI6ImJhc2ljIiwic2NvcGUiOiJzcGVlY2giLCJzdWIiOiItNTZLYzhNR2lNelVvUWFVbXNJTSIsInVjIjpmYWxzZSwidiI6MX0.Sazq60OOgtBUlCPAwGflg7jHBun022o4ld5Y_KX1XLs
+}
+
+body:json {
+  {
+    "model_name": "whisper",
+    "language": "ja",
+    "use_diarization": true,
+    "diarization": {
+      "spk_count": 2
+    }
+  }
+}
+
+body:multipart-form {
+  file: @file(/Users/bini/Downloads/N5 Sample.mp3) @contentType(multipart/form-data)
+  config: '''
+    {
+      "model_name": "whisper",
+      "language": "ja",
+      "use_diarization": true,
+      "diarization": {
+        "spk_count": 2
+      }
+    }
+  '''
+}
