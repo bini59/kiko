@@ -78,7 +78,7 @@ Kiko는 일본어 청취 기반 학습 플랫폼으로, 라디오 음성을 STT 
 
 | 분야       | 기술 제안                                  |
 | -------- | -------------------------------------- |
-| 프론트엔드    | React, Zustand, TailwindCSS, Shadcn/ui |
+| 프론트엔드    | Svelte, TailwindCSS, Shadcn/ui |
 | 백엔드      | FastAPI (Python 기반 REST API 서버)        |
 | 음성→텍스트   | OpenAI Whisper API 또는 Google STT       |
 | 번역       | DeepL API 또는 Papago API                |
