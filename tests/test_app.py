@@ -68,10 +68,42 @@ def test_add_and_list_vocab(client):
     word = {'id': 1, 'word': 'test', 'meaning': 'meaning'}
     resp = client.post('/vocab', json=word)
     assert resp.status_code == 200
-    assert resp.json() == word
+    data = resp.json()
+    for k, v in word.items():
+        assert data[k] == v
     resp = client.get('/vocab')
     assert resp.status_code == 200
-    assert word in resp.json()
+    returned = resp.json()[0]
+    for k, v in word.items():
+        assert returned[k] == v
+
+
+def test_get_vocab_success(client):
+    word = {'id': 2, 'word': 'hello', 'meaning': 'hi'}
+    client.post('/vocab', json=word)
+    resp = client.get('/vocab/2')
+    assert resp.status_code == 200
+    assert resp.json()['word'] == 'hello'
+
+
+def test_get_vocab_not_found(client):
+    resp = client.get('/vocab/999')
+    assert resp.status_code == 404
+
+
+def test_delete_vocab_success(client):
+    word = {'id': 3, 'word': 'bye', 'meaning': 'goodbye'}
+    client.post('/vocab', json=word)
+    resp = client.delete('/vocab/3')
+    assert resp.status_code == 200
+    assert resp.json()['status'] == 'deleted'
+    resp = client.get('/vocab/3')
+    assert resp.status_code == 404
+
+
+def test_delete_vocab_not_found(client):
+    resp = client.delete('/vocab/12345')
+    assert resp.status_code == 404
 
 
 def test_vocab_validation_error(client):

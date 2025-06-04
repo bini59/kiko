@@ -40,11 +40,19 @@
 
 ## 단어장 관리
 ### POST `/vocab`
-- **요청 본문**: `VocabWord` 객체 `{ "id": int, "word": "string", "meaning": "string" }`
+- **요청 본문**: `VocabWord` 객체 `{ "id": int, "word": "string", "meaning": "string", "example": "string?", "episode_id": int? }`
 - **응답**: 저장된 `VocabWord`
 
 ### GET `/vocab`
 - **응답**: 저장된 단어들의 배열
+
+### GET `/vocab/{id}`
+- **응답**: ID에 해당하는 `VocabWord`
+- **오류**: 존재하지 않는 ID일 경우 `404 Not Found`
+
+### DELETE `/vocab/{id}`
+- **응답**: `{ "status": "deleted" }`
+- **오류**: 존재하지 않는 ID일 경우 `404 Not Found`
 
 요청 시마다 내부 목록에 단어를 추가하고 동일한 목록을 반환합니다.
 
