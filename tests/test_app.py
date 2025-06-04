@@ -4,6 +4,7 @@ import sys
 from fastapi.testclient import TestClient
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 import app
+import kiko_api
 import pytest
 
 @pytest.fixture
@@ -76,3 +77,23 @@ def test_add_and_list_vocab(client):
 def test_vocab_validation_error(client):
     resp = client.post('/vocab', json={'id': 1, 'word': 'test'})
     assert resp.status_code == 422
+
+
+def test_translate_endpoint(client, monkeypatch):
+    def fake_translate(text, token):
+        assert text == "こんにちは"
+        return "hello"
+
+    monkeypatch.setattr("kiko_api.translate_text", fake_translate)
+    resp = client.post('/translate', json={'text': 'こんにちは'})
+    assert resp.status_code == 200
+    assert resp.json()['text'] == 'hello'
+
+
+def test_translate_failure(client, monkeypatch):
+    def fail_translate(text, token):
+        raise kiko_api.TranslationAPIError("boom")
+
+    monkeypatch.setattr("kiko_api.translate_text", fail_translate)
+    resp = client.post('/translate', json={'text': 'こんにちは'})
+    assert resp.status_code == 500
