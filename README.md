@@ -29,3 +29,6 @@ This repository includes a small FastAPI application exposing the basic endpoint
 ```bash
 uvicorn src.app:app --reload
 ```
+
+The speech-to-text endpoints use OpenAI Whisper. Set the `OPENAI_API_KEY` environment
+variable before launching the server to enable transcription functionality.
