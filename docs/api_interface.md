@@ -79,3 +79,18 @@
 - **오류**: Jisho API 조회 실패 시 `500` 응답을 반환
 
 이 엔드포인트는 Jisho 공개 API를 통해 일본어 단어의 영어 뜻을 조회합니다.
+
+## 학습 진도 관리
+### PUT `/progress/{episode_id}`
+- **헤더**: `Authorization: Bearer <jwt>`
+- **요청 본문**: `{ "position": int }`
+- **응답**: `{ "episode_id": int, "position": int }`
+
+### GET `/progress/{episode_id}`
+- **헤더**: `Authorization: Bearer <jwt>`
+- **응답**: `{ "episode_id": int, "position": int }`
+- **오류**: 저장된 진도가 없을 경우 `404 Not Found`
+
+### GET `/history`
+- **헤더**: `Authorization: Bearer <jwt>`
+- **응답**: `[{ "episode_id": int, "position": int }, ...]`

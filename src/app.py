@@ -80,8 +80,18 @@ class Settings(BaseModel):
     show_translation: bool = True
 
 
+class Progress(BaseModel):
+    episode_id: int
+    position: int
+
+
+class ProgressUpdate(BaseModel):
+    position: int
+
+
 fake_vocab: List[VocabWord] = []
 users: Dict[str, Dict] = {}
+progress_data: Dict[str, Dict[int, int]] = {}
 
 
 @app.post("/auth/signup")
@@ -205,3 +215,34 @@ def dictionary_lookup(word: str):
     except kiko_api.DictionaryAPIError:
         raise HTTPException(status_code=500, detail="Lookup failed")
     return {"word": word, "meaning": meaning}
+
+
+@app.put("/progress/{episode_id}", response_model=Progress)
+def update_progress(
+    episode_id: int,
+    prog: ProgressUpdate,
+    Authorization: str = Header(None),
+):
+    username = user_from_header(Authorization)
+    user_p = progress_data.setdefault(username, {})
+    user_p[episode_id] = prog.position
+    return {"episode_id": episode_id, "position": prog.position}
+
+
+@app.get("/progress/{episode_id}", response_model=Progress)
+def get_progress(episode_id: int, Authorization: str = Header(None)):
+    username = user_from_header(Authorization)
+    user_p = progress_data.get(username, {})
+    if episode_id not in user_p:
+        raise HTTPException(status_code=404, detail="Progress not found")
+    return {"episode_id": episode_id, "position": user_p[episode_id]}
+
+
+@app.get("/history", response_model=List[Progress])
+def get_history(Authorization: str = Header(None)):
+    username = user_from_header(Authorization)
+    user_p = progress_data.get(username, {})
+    return [
+        {"episode_id": eid, "position": pos}
+        for eid, pos in user_p.items()
+    ]
