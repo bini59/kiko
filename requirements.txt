@@ -5,3 +5,4 @@ uvicorn
 httpx<0.25
 python-multipart
 openai
+PyJWT

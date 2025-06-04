@@ -13,14 +13,37 @@ def client():
     return TestClient(app.app)
 
 def test_auth_returns_token(client):
+    resp = client.post('/auth/signup', json={'username': 'u', 'password': 'p'})
+    assert resp.status_code == 200
+    token = resp.json()['token']
+    assert token
     resp = client.post('/auth/login', json={'username': 'u', 'password': 'p'})
     assert resp.status_code == 200
-    assert resp.json()['token'] == 'fake-token'
+    assert resp.json()['token']
 
 
 def test_auth_validation_error(client):
     resp = client.post('/auth/login', json={})
     assert resp.status_code == 422
+
+
+def test_login_invalid_credentials(client):
+    client.post('/auth/signup', json={'username': 'u2', 'password': 'p'})
+    resp = client.post('/auth/login', json={'username': 'u2', 'password': 'wrong'})
+    assert resp.status_code == 401
+
+
+def test_user_settings_flow(client):
+    resp = client.post('/auth/signup', json={'username': 'user', 'password': 'pass'})
+    token = resp.json()['token']
+    headers = {'Authorization': f'Bearer {token}'}
+    resp = client.get('/settings', headers=headers)
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data['theme'] == 'light'
+    resp = client.put('/settings', json={'theme': 'dark', 'font_size': 20, 'show_translation': False}, headers=headers)
+    assert resp.status_code == 200
+    assert resp.json()['theme'] == 'dark'
 
 def test_list_episodes(client):
     resp = client.get('/episodes')
