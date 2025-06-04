@@ -81,7 +81,35 @@
 * `Toast`: 저장 완료, 오류 안내 등 피드백
 * `Skeleton`: 로딩 시 스크립트/단어 로딩 UI
 
----
+```
+graph TD
+  Root[홈 (/)]
+  Episode[에피소드 상세 (/episode/:id)]
+  Vocab[단어장 (/vocab)]
+  Login[로그인 (/login)]
+  Signup[회원가입 (/signup)]
+  Mypage[마이페이지 (/mypage)]
+  Error404[404 에러]
+  Error401[401 에러]
+  Error500[500 에러]
 
-필요하시면 위 내용을 **Figma 제작 가이드** 또는 **Mermaid 기반 UI 트리 구조**로도 변환해드릴 수 있어요.
-예시로 Mermaid로 트리형 UI 구조를 보시겠어요?
+  Root --> Episode
+  Root --> Vocab
+  Root --> Login
+  Root --> Signup
+  Root --> Mypage
+
+  Episode --> AudioPlayer[🎵 오디오 플레이어]
+  Episode --> ScriptArea[📝 스크립트 + 해석]
+  Episode --> WordPanel[📖 단어 툴팁/패널]
+  
+  Vocab --> WordList[🗂️ 단어 리스트]
+  Vocab --> ReviewMode[🧠 복습 모드]
+
+  Mypage --> History[📈 학습 이력]
+  Mypage --> Settings[⚙️ 사용자 설정]
+
+  Root --> Error404
+  Root --> Error401
+  Root --> Error500
+```
