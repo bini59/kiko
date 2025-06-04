@@ -23,6 +23,7 @@
   "id": 1,
   "title": "Sample Episode",
   "length": 300,
+  "audio_url": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
   "script": "こんにちは"
 }
 ```

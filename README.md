@@ -32,3 +32,16 @@ uvicorn src.app:app --reload
 
 The speech-to-text endpoints use OpenAI Whisper. Set the `OPENAI_API_KEY` environment
 variable before launching the server to enable transcription functionality.
+
+## Frontend development
+
+The `frontend` directory contains a simple Svelte application displaying the
+episode list and an audio player. To start the frontend dev server run:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+The build output is written to `frontend/dist`.

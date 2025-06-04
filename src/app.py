@@ -13,11 +13,25 @@ class Episode(BaseModel):
     id: int
     title: str
     length: int
+    audio_url: str
     script: str | None = None
 
 
 fake_episodes: List[Episode] = [
-    Episode(id=1, title="Sample Episode", length=300, script="こんにちは"),
+    Episode(
+        id=1,
+        title="Sample Episode 1",
+        length=300,
+        audio_url="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+        script="こんにちは",
+    ),
+    Episode(
+        id=2,
+        title="Sample Episode 2",
+        length=420,
+        audio_url="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+        script="おはようございます",
+    ),
 ]
 
 

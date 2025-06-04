@@ -18,8 +18,12 @@
   <h1 class="text-2xl font-bold mb-4">📻 Kiko Episodes</h1>
   <ul class="space-y-2">
     {#each episodes as ep}
-      <li class="border p-2 rounded cursor-pointer hover:bg-gray-50" on:click={() => selectEpisode(ep)}>
-        <span class="font-semibold">{ep.title}</span> <span class="text-sm text-gray-600">({ep.length}s)</span>
+      <li
+        class="border p-2 rounded cursor-pointer hover:bg-gray-50 {selected && selected.id === ep.id ? 'bg-gray-100' : ''}"
+        on:click={() => selectEpisode(ep)}
+      >
+        <span class="font-semibold">{ep.title}</span>
+        <span class="text-sm text-gray-600">({ep.length}s)</span>
       </li>
     {/each}
   </ul>
@@ -29,7 +33,7 @@
       <h2 class="text-xl font-semibold">{selected.title}</h2>
       <p class="text-gray-700">Length: {selected.length} sec</p>
       <audio bind:playbackRate={playbackRate} controls class="mt-2 w-full">
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg" />
+        <source src={selected.audio_url} type="audio/mpeg" />
       </audio>
       <label class="block mt-2 text-sm">
         Speed:

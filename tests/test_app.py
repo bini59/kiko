@@ -27,11 +27,14 @@ def test_list_episodes(client):
     data = resp.json()
     assert isinstance(data, list)
     assert data[0]['id'] == 1
+    assert 'audio_url' in data[0]
 
 def test_get_episode_success(client):
     resp = client.get('/episodes/1')
     assert resp.status_code == 200
-    assert resp.json()['id'] == 1
+    data = resp.json()
+    assert data['id'] == 1
+    assert 'audio_url' in data
 
 def test_get_episode_not_found(client):
     resp = client.get('/episodes/999')
