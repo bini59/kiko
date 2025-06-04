@@ -18,6 +18,10 @@ pytest
 
 The file [docs/test_plan.md](docs/test_plan.md) describes the PRD-based test categories and the criteria used to verify each feature.
 
+## API documentation
+
+See [docs/api_interface.md](docs/api_interface.md) for details on the available FastAPI endpoints.
+
 ## Running the API server
 
 This repository includes a small FastAPI application exposing the basic endpoints proposed in the PRD. To start the development server run:
