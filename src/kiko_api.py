@@ -2,11 +2,17 @@ import uuid
 from typing import Dict
 
 import openai
+import requests
 
 API_URL = "https://api.openai.com/v1"
 
 
 class VitoAPIError(Exception):
+    pass
+
+
+class TranslationAPIError(Exception):
+    """Raised when translation fails."""
     pass
 
 
@@ -36,3 +42,26 @@ def get_transcription_result(transcript_id: str, token: str) -> dict:
     if transcript_id not in _TRANSCRIPTS:
         raise VitoAPIError("Transcript not found")
     return {"text": _TRANSCRIPTS[transcript_id]}
+
+
+def translate_text(text: str, token: str, source_lang: str = "JA", target_lang: str = "EN") -> str:
+    """Translate text using the DeepL API."""
+    if not token:
+        raise TranslationAPIError("Missing API key")
+    url = "https://api-free.deepl.com/v2/translate"
+    try:
+        resp = requests.post(
+            url,
+            data={
+                "auth_key": token,
+                "text": text,
+                "source_lang": source_lang,
+                "target_lang": target_lang,
+            },
+            timeout=10,
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        return data["translations"][0]["text"]
+    except Exception as exc:
+        raise TranslationAPIError(str(exc)) from exc

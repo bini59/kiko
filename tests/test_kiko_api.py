@@ -42,3 +42,29 @@ def test_get_transcription_result_success():
 def test_get_transcription_result_failure():
     with pytest.raises(kiko_api.VitoAPIError):
         kiko_api.get_transcription_result("nope", "token")
+
+
+def test_translate_text_success(monkeypatch):
+    def fake_post(url, data, timeout):
+        class Resp:
+            def raise_for_status(self):
+                pass
+
+            def json(self):
+                return {"translations": [{"text": "hello"}]}
+
+        assert data["text"] == "こんにちは"
+        return Resp()
+
+    monkeypatch.setattr(kiko_api.requests, "post", fake_post)
+    text = kiko_api.translate_text("こんにちは", "token")
+    assert text == "hello"
+
+
+def test_translate_text_failure(monkeypatch):
+    def fake_post(url, data, timeout):
+        raise Exception("boom")
+
+    monkeypatch.setattr(kiko_api.requests, "post", fake_post)
+    with pytest.raises(kiko_api.TranslationAPIError):
+        kiko_api.translate_text("hi", "token")

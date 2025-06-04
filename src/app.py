@@ -46,6 +46,10 @@ class VocabWord(BaseModel):
     meaning: str
 
 
+class TextRequest(BaseModel):
+    text: str
+
+
 fake_vocab: List[VocabWord] = []
 
 
@@ -106,3 +110,15 @@ def add_vocab(word: VocabWord):
 @app.get("/vocab", response_model=List[VocabWord])
 def list_vocab():
     return fake_vocab
+
+
+@app.post("/translate")
+def translate(req: TextRequest):
+    """Translate Japanese text to English using DeepL."""
+    try:
+        translated = kiko_api.translate_text(
+            req.text, os.environ.get("DEEPL_API_KEY", "")
+        )
+    except kiko_api.TranslationAPIError:
+        raise HTTPException(status_code=500, detail="Translation failed")
+    return {"text": translated}

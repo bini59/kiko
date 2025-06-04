@@ -33,6 +33,8 @@ uvicorn src.app:app --reload
 The speech-to-text endpoints use OpenAI Whisper. Set the `OPENAI_API_KEY` environment
 variable before launching the server to enable transcription functionality.
 
+Translations require a DeepL API key set in `DEEPL_API_KEY`.
+
 ## Frontend development
 
 The `frontend` directory contains a simple Svelte application displaying the
