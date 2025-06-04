@@ -16,6 +16,11 @@ class TranslationAPIError(Exception):
     pass
 
 
+class DictionaryAPIError(Exception):
+    """Raised when dictionary lookup fails."""
+    pass
+
+
 # In-memory storage for transcription results
 _TRANSCRIPTS: Dict[str, str] = {}
 
@@ -65,3 +70,19 @@ def translate_text(text: str, token: str, source_lang: str = "JA", target_lang: 
         return data["translations"][0]["text"]
     except Exception as exc:
         raise TranslationAPIError(str(exc)) from exc
+
+
+def lookup_word(word: str) -> str:
+    """Look up a Japanese word via the Jisho API and return its first English definition."""
+    url = "https://jisho.org/api/v1/search/words"
+    try:
+        resp = requests.get(url, params={"keyword": word}, timeout=10)
+        resp.raise_for_status()
+        data = resp.json()
+        if not data.get("data"):
+            raise DictionaryAPIError("No results")
+        entry = data["data"][0]
+        meaning = entry["senses"][0]["english_definitions"][0]
+        return meaning
+    except Exception as exc:
+        raise DictionaryAPIError(str(exc)) from exc

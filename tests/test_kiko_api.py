@@ -68,3 +68,29 @@ def test_translate_text_failure(monkeypatch):
     monkeypatch.setattr(kiko_api.requests, "post", fake_post)
     with pytest.raises(kiko_api.TranslationAPIError):
         kiko_api.translate_text("hi", "token")
+
+
+def test_lookup_word_success(monkeypatch):
+    def fake_get(url, params, timeout):
+        class Resp:
+            def raise_for_status(self):
+                pass
+
+            def json(self):
+                return {"data": [{"senses": [{"english_definitions": ["hello"]}]}]}
+
+        assert params["keyword"] == "こんにちは"
+        return Resp()
+
+    monkeypatch.setattr(kiko_api.requests, "get", fake_get)
+    meaning = kiko_api.lookup_word("こんにちは")
+    assert meaning == "hello"
+
+
+def test_lookup_word_failure(monkeypatch):
+    def fake_get(url, params, timeout):
+        raise Exception("boom")
+
+    monkeypatch.setattr(kiko_api.requests, "get", fake_get)
+    with pytest.raises(kiko_api.DictionaryAPIError):
+        kiko_api.lookup_word("nope")

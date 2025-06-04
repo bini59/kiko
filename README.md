@@ -21,6 +21,7 @@ The file [docs/test_plan.md](docs/test_plan.md) describes the PRD-based test cat
 ## API documentation
 
 See [docs/api_interface.md](docs/api_interface.md) for details on the available FastAPI endpoints.
+The API now includes a dictionary lookup endpoint using Jisho for word meanings.
 
 ## Running the API server
 

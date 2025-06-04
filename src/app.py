@@ -122,3 +122,13 @@ def translate(req: TextRequest):
     except kiko_api.TranslationAPIError:
         raise HTTPException(status_code=500, detail="Translation failed")
     return {"text": translated}
+
+
+@app.get("/dictionary/{word}")
+def dictionary_lookup(word: str):
+    """Return English meaning for a Japanese word using Jisho."""
+    try:
+        meaning = kiko_api.lookup_word(word)
+    except kiko_api.DictionaryAPIError:
+        raise HTTPException(status_code=500, detail="Lookup failed")
+    return {"word": word, "meaning": meaning}
