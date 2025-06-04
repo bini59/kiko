@@ -173,3 +173,28 @@ def test_dictionary_endpoint_failure(client, monkeypatch):
     monkeypatch.setattr(kiko_api, "lookup_word", fail_lookup)
     resp = client.get('/dictionary/test')
     assert resp.status_code == 500
+
+
+def test_progress_flow(client):
+    resp = client.post('/auth/signup', json={'username': 'prog', 'password': 'p'})
+    token = resp.json()['token']
+    headers = {'Authorization': f'Bearer {token}'}
+    resp = client.put('/progress/1', json={'position': 30}, headers=headers)
+    assert resp.status_code == 200
+    assert resp.json()['position'] == 30
+    resp = client.get('/progress/1', headers=headers)
+    assert resp.status_code == 200
+    assert resp.json()['position'] == 30
+    resp = client.get('/history', headers=headers)
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data[0]['episode_id'] == 1
+    assert data[0]['position'] == 30
+
+
+def test_progress_not_found(client):
+    resp = client.post('/auth/signup', json={'username': 'p2', 'password': 'p'})
+    token = resp.json()['token']
+    headers = {'Authorization': f'Bearer {token}'}
+    resp = client.get('/progress/1', headers=headers)
+    assert resp.status_code == 404
