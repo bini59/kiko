@@ -44,6 +44,8 @@ class VocabWord(BaseModel):
     id: int
     word: str
     meaning: str
+    example: str | None = None
+    episode_id: int | None = None
 
 
 class TextRequest(BaseModel):
@@ -110,6 +112,23 @@ def add_vocab(word: VocabWord):
 @app.get("/vocab", response_model=List[VocabWord])
 def list_vocab():
     return fake_vocab
+
+
+@app.get("/vocab/{word_id}", response_model=VocabWord)
+def get_vocab(word_id: int):
+    for word in fake_vocab:
+        if word.id == word_id:
+            return word
+    raise HTTPException(status_code=404, detail="Word not found")
+
+
+@app.delete("/vocab/{word_id}")
+def delete_vocab(word_id: int):
+    for i, word in enumerate(fake_vocab):
+        if word.id == word_id:
+            del fake_vocab[i]
+            return {"status": "deleted"}
+    raise HTTPException(status_code=404, detail="Word not found")
 
 
 @app.post("/translate")
