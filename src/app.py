@@ -1,10 +1,32 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, HTTPException, Header
 from pydantic import BaseModel
-from typing import List
+from typing import List, Dict
+import jwt
+
+SECRET = "secret"
 import os
 import tempfile
 
 import kiko_api
+
+
+def create_token(username: str) -> str:
+    return jwt.encode({"sub": username}, SECRET, algorithm="HS256")
+
+
+def decode_token(token: str) -> str:
+    try:
+        data = jwt.decode(token, SECRET, algorithms=["HS256"])
+        return data["sub"]
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+
+def user_from_header(auth_header: str) -> str:
+    if not auth_header or not auth_header.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Invalid token")
+    token = auth_header.split(" ", 1)[1]
+    return decode_token(token)
 
 app = FastAPI(title="Kiko API")
 
@@ -52,14 +74,46 @@ class TextRequest(BaseModel):
     text: str
 
 
+class Settings(BaseModel):
+    theme: str = "light"
+    font_size: int = 14
+    show_translation: bool = True
+
+
 fake_vocab: List[VocabWord] = []
+users: Dict[str, Dict] = {}
 
 
 @app.post("/auth/signup")
+def signup(user: User):
+    if user.username in users:
+        raise HTTPException(status_code=400, detail="User exists")
+    users[user.username] = {
+        "password": user.password,
+        "settings": Settings().dict(),
+    }
+    return {"token": create_token(user.username)}
+
+
 @app.post("/auth/login")
-def auth(user: User):
-    """Mock authentication returning a fake token."""
-    return {"token": "fake-token"}
+def login(user: User):
+    info = users.get(user.username)
+    if not info or info["password"] != user.password:
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    return {"token": create_token(user.username)}
+
+
+@app.get("/settings", response_model=Settings)
+def get_settings(Authorization: str = Header(None)):
+    username = user_from_header(Authorization)
+    return Settings(**users[username]["settings"])
+
+
+@app.put("/settings", response_model=Settings)
+def update_settings(settings: Settings, Authorization: str = Header(None)):
+    username = user_from_header(Authorization)
+    users[username]["settings"] = settings.dict()
+    return settings
 
 
 @app.get("/episodes", response_model=List[Episode])

@@ -5,9 +5,18 @@
 ## 인증
 ### POST `/auth/signup` 및 `/auth/login`
 - **요청 본문**: `{ "username": "string", "password": "string" }`
-- **응답**: `{ "token": "fake-token" }`
+- **응답**: `{ "token": "<jwt>" }`
 
-두 엔드포인트 모두 동일한 동작을 하며 사용자를 인증 또는 등록하는 것처럼 보이지만 항상 고정된 토큰을 반환합니다.
+두 엔드포인트는 JWT 기반 인증을 제공한다. `/auth/signup`은 새 사용자를 등록하고 즉시 토큰을 반환하며, `/auth/login`은 등록된 사용자 정보를 확인 후 토큰을 돌려준다.
+
+### GET `/settings`
+- **헤더**: `Authorization: Bearer <jwt>`
+- **응답**: `{ "theme": "light", "font_size": 14, "show_translation": true }`
+
+### PUT `/settings`
+- **헤더**: `Authorization: Bearer <jwt>`
+- **요청 본문**: 위와 동일한 설정 객체
+- **응답**: 저장된 설정 값
 
 ## 에피소드 관리
 ### GET `/episodes`
