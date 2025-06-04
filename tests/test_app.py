@@ -97,3 +97,24 @@ def test_translate_failure(client, monkeypatch):
     monkeypatch.setattr("kiko_api.translate_text", fail_translate)
     resp = client.post('/translate', json={'text': 'こんにちは'})
     assert resp.status_code == 500
+
+
+def test_dictionary_endpoint_success(client, monkeypatch):
+    def fake_lookup(word):
+        assert word == "こんにちは"
+        return "hello"
+
+    monkeypatch.setattr(kiko_api, "lookup_word", fake_lookup)
+    resp = client.get('/dictionary/こんにちは')
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["meaning"] == "hello"
+
+
+def test_dictionary_endpoint_failure(client, monkeypatch):
+    def fail_lookup(word):
+        raise kiko_api.DictionaryAPIError("boom")
+
+    monkeypatch.setattr(kiko_api, "lookup_word", fail_lookup)
+    resp = client.get('/dictionary/test')
+    assert resp.status_code == 500

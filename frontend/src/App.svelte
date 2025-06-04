@@ -7,6 +7,7 @@
   let scriptSentences = [];
   let translationSentences = [];
   let highlight = -1;
+  let wordInfo = null;
 
   onMount(async () => {
     const res = await fetch('/episodes');
@@ -34,6 +35,13 @@
     if (!selected || scriptSentences.length === 0) return;
     const ratio = e.target.currentTime / selected.length;
     highlight = Math.floor(ratio * scriptSentences.length);
+  };
+
+  const lookupWord = async (word) => {
+    const res = await fetch(`/dictionary/${encodeURIComponent(word)}`);
+    if (res.ok) {
+      wordInfo = await res.json();
+    }
   };
 </script>
 
@@ -70,7 +78,12 @@
       <div class="mt-4 grid grid-cols-2 gap-4 text-lg leading-relaxed">
         <div>
           {#each scriptSentences as s, i}
-            <span class={i === highlight ? 'bg-yellow-200' : ''}>{s}。</span>
+            <span class={i === highlight ? 'bg-yellow-200' : ''}>
+              {#each s.split(' ') as w, wi}
+                <span class="cursor-pointer" on:click={() => lookupWord(w)}>{w}</span>{wi < s.split(' ').length - 1 ? ' ' : ''}
+              {/each}
+              。
+            </span>
           {/each}
         </div>
         <div class="text-gray-700">
@@ -79,6 +92,11 @@
           {/each}
         </div>
       </div>
+      {#if wordInfo}
+        <div class="mt-4 p-2 border rounded bg-gray-50">
+          <strong>{wordInfo.word}</strong>: {wordInfo.meaning}
+        </div>
+      {/if}
     </div>
   {/if}
 </main>
