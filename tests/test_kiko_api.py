@@ -12,35 +12,33 @@ def test_transcribe_audio_success(tmp_path):
     dummy_path = tmp_path / "audio.mp3"
     dummy_path.write_bytes(b"dummy")
 
-    with mock.patch("requests.post") as mock_post, mock.patch.object(builtins, "open", mock.mock_open(read_data=b"dummy")):
-        mock_post.return_value.status_code = 200
-        mock_post.return_value.json.return_value = {"id": "123"}
+    with mock.patch("kiko_api.openai.Audio.transcribe") as mock_transcribe, \
+         mock.patch.object(builtins, "open", mock.mock_open(read_data=b"dummy")):
+        mock_transcribe.return_value = {"text": "hello"}
         transcript_id = kiko_api.transcribe_audio(str(dummy_path), "token")
-        assert transcript_id == "123"
-        mock_post.assert_called_once()
+        assert transcript_id in kiko_api._TRANSCRIPTS
+        assert kiko_api._TRANSCRIPTS[transcript_id] == "hello"
+        mock_transcribe.assert_called_once()
 
 
 def test_transcribe_audio_failure(tmp_path):
     dummy_path = tmp_path / "audio.mp3"
     dummy_path.write_bytes(b"dummy")
 
-    with mock.patch("requests.post") as mock_post, mock.patch.object(builtins, "open", mock.mock_open(read_data=b"dummy")):
-        mock_post.return_value.status_code = 500
+    with mock.patch("kiko_api.openai.Audio.transcribe") as mock_transcribe, \
+         mock.patch.object(builtins, "open", mock.mock_open(read_data=b"dummy")):
+        mock_transcribe.side_effect = Exception("fail")
         with pytest.raises(kiko_api.VitoAPIError):
             kiko_api.transcribe_audio(str(dummy_path), "token")
 
 
 def test_get_transcription_result_success():
-    with mock.patch("requests.get") as mock_get:
-        mock_get.return_value.status_code = 200
-        mock_get.return_value.json.return_value = {"text": "hello"}
-        data = kiko_api.get_transcription_result("123", "token")
-        assert data["text"] == "hello"
-        mock_get.assert_called_once()
+    kiko_api._TRANSCRIPTS.clear()
+    kiko_api._TRANSCRIPTS["123"] = "hello"
+    data = kiko_api.get_transcription_result("123", "token")
+    assert data["text"] == "hello"
 
 
 def test_get_transcription_result_failure():
-    with mock.patch("requests.get") as mock_get:
-        mock_get.return_value.status_code = 404
-        with pytest.raises(kiko_api.VitoAPIError):
-            kiko_api.get_transcription_result("123", "token")
+    with pytest.raises(kiko_api.VitoAPIError):
+        kiko_api.get_transcription_result("nope", "token")

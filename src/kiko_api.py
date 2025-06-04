@@ -1,38 +1,38 @@
-import requests
+import uuid
+from typing import Dict
 
-API_URL = "https://openapi.vito.ai/v1"
+import openai
+
+API_URL = "https://api.openai.com/v1"
+
 
 class VitoAPIError(Exception):
     pass
 
 
-def transcribe_audio(file_path: str, token: str) -> str:
-    """Upload an audio file for transcription.
+# In-memory storage for transcription results
+_TRANSCRIPTS: Dict[str, str] = {}
 
-    Returns the transcription id.
+
+def transcribe_audio(file_path: str, token: str) -> str:
+    """Transcribe an audio file using OpenAI's Whisper API.
+
+    Returns a transcript id that can later be used to fetch the result.
     """
-    url = f"{API_URL}/transcribe"
-    headers = {"Authorization": f"Bearer {token}"}
-    files = {
-        "file": open(file_path, "rb"),
-        "config": (
-            None,
-            '{"model_name": "whisper", "language": "ja"}',
-            "application/json",
-        ),
-    }
-    response = requests.post(url, files=files, headers=headers)
-    if response.status_code != 200:
-        raise VitoAPIError(f"Unexpected status {response.status_code}")
-    data = response.json()
-    return data["id"]
+    openai.api_key = token
+    try:
+        with open(file_path, "rb") as fh:
+            result = openai.Audio.transcribe("whisper-1", fh)
+    except Exception as exc:  # pragma: no cover - error path covered in tests
+        raise VitoAPIError(str(exc)) from exc
+
+    transcript_id = str(uuid.uuid4())
+    _TRANSCRIPTS[transcript_id] = result["text"]
+    return transcript_id
 
 
 def get_transcription_result(transcript_id: str, token: str) -> dict:
-    """Get the transcription result given an id."""
-    url = f"{API_URL}/transcribe/{transcript_id}"
-    headers = {"Authorization": f"Bearer {token}"}
-    response = requests.get(url, headers=headers)
-    if response.status_code != 200:
-        raise VitoAPIError(f"Unexpected status {response.status_code}")
-    return response.json()
+    """Retrieve a previously created transcription result."""
+    if transcript_id not in _TRANSCRIPTS:
+        raise VitoAPIError("Transcript not found")
+    return {"text": _TRANSCRIPTS[transcript_id]}

@@ -30,12 +30,12 @@
 ## 음성 전사
 ### POST `/transcribe`
 - **요청**: `multipart/form-data` 형식의 음성 파일(`file` 필드)
-- **응답**: `{ "transcript_id": "123" }`
+- **응답**: `{ "transcript_id": "<uuid>" }`
 
 ### GET `/transcribe/{id}`
-- **응답**: `{ "text": "dummy text" }`
+- **응답**: `{ "text": "<transcribed text>" }`
 
-현재는 외부 STT 서비스와 연동하지 않고 항상 고정된 값을 반환합니다.
+이제 OpenAI Whisper API를 사용해 실제 음성 인식 결과를 반환합니다. 서버에서 `OPENAI_API_KEY` 환경 변수를 사용해 인증하며, 결과는 메모리에 임시 저장되어 조회할 수 있습니다.
 
 ## 단어장 관리
 ### POST `/vocab`

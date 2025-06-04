@@ -37,13 +37,23 @@ def test_get_episode_not_found(client):
     resp = client.get('/episodes/999')
     assert resp.status_code == 404
 
-def test_transcribe_endpoint(client, tmp_path):
+def test_transcribe_endpoint(client, tmp_path, monkeypatch):
     file_path = tmp_path / 'audio.mp3'
     file_path.write_bytes(b'test')
+
+    def fake_transcribe(model, fh):
+        return {"text": "hello"}
+
+    monkeypatch.setattr("kiko_api.openai.Audio.transcribe", fake_transcribe)
+
     with file_path.open('rb') as f:
         resp = client.post('/transcribe', files={'file': ('audio.mp3', f, 'audio/mpeg')})
     assert resp.status_code == 200
-    assert resp.json()['transcript_id'] == '123'
+    transcript_id = resp.json()['transcript_id']
+    assert transcript_id
+    resp2 = client.get(f'/transcribe/{transcript_id}')
+    assert resp2.status_code == 200
+    assert resp2.json()['text'] == 'hello'
 
 
 def test_transcribe_requires_file(client):

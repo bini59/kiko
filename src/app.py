@@ -1,6 +1,10 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from pydantic import BaseModel
 from typing import List
+import os
+import tempfile
+
+import kiko_api
 
 app = FastAPI(title="Kiko API")
 
@@ -53,19 +57,30 @@ def get_episode(episode_id: int):
 
 @app.post("/transcribe")
 async def transcribe(file: UploadFile = File(...)):
-    """Receive an audio file and return a transcription id (mock)."""
-    # In a real implementation this would store the file and invoke the STT service.
-    return {"transcript_id": "123"}
+    """Receive an audio file and return a transcription id."""
+    with tempfile.NamedTemporaryFile(delete=False) as tmp:
+        tmp.write(await file.read())
+        tmp_path = tmp.name
+
+    try:
+        transcript_id = kiko_api.transcribe_audio(
+            tmp_path, os.environ.get("OPENAI_API_KEY", "")
+        )
+    finally:
+        os.unlink(tmp_path)
+
+    return {"transcript_id": transcript_id}
 
 
 @app.get("/transcribe/{transcript_id}")
 def get_transcription(transcript_id: str):
-    """Return transcription result (mock)."""
-    # Placeholder: call to external STT service
-    result = {
-        "text": "dummy text"
-    }
-    return result
+    """Return transcription result."""
+    try:
+        return kiko_api.get_transcription_result(
+            transcript_id, os.environ.get("OPENAI_API_KEY", "")
+        )
+    except kiko_api.VitoAPIError:
+        raise HTTPException(status_code=404, detail="Transcript not found")
 
 
 @app.post("/vocab", response_model=VocabWord)
